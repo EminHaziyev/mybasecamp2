@@ -1,0 +1,10 @@
+body{font-family:system-ui,Arial,sans-serif;margin:0;padding:0;line-height:1.4}
+nav{display:flex;gap:1rem;padding:.75rem 1rem;background:#111;color:#fff}
+nav a,nav span{color:#fff;text-decoration:none}
+main{padding:1rem;max-width:900px;margin:0 auto}
+.flash{padding:.5rem .75rem;margin:1rem 0;border-radius:6px}
+.flash.error{background:#ffe5e5;color:#a40000}
+.flash.success{background:#e8fff0;color:#006b2d}
+form label{display:block;margin:.5rem 0}
+button{cursor:pointer}
+

@@ -1,0 +1,8 @@
+<h2>Edit Project</h2>
+<form method="post" action="/projects/<%= project.id %>?_method=PUT">
+	<label>Name <input name="name" value="<%= project.name %>" required /></label><br/>
+	<label>Description <textarea name="description"><%= project.description || '' %></textarea></label><br/>
+	<button>Update project</button>
+</form>
+
+

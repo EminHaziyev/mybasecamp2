@@ -1,0 +1,101 @@
+<h2>Project: <%= project.name %></h2>
+<p><%= project.description %></p>
+
+<% if (isAuthenticated) { %>
+	<a href="/users/<%= currentUser.id %>">My Dashboard</a> | 
+	<a href="/projects/<%= project.id %>/edit">Edit</a>
+	<form method="post" action="/projects/<%= project.id %>?_method=DELETE" style="display:inline">
+		<button>Delete</button>
+	</form>
+<% } %>
+
+<h3>Members</h3>
+<% if (membership && membership.role === 'admin') { %>
+	<form method="post" action="/projects/<%= project.id %>/add-member" style="margin-bottom: 20px;">
+		<input type="email" name="email" placeholder="User email" required />
+		<select name="role">
+			<option value="member">Member</option>
+			<option value="admin">Admin</option>
+		</select>
+		<button>Add Member</button>
+	</form>
+<% } %>
+<ul>
+	<% project.Users.forEach(u => { %>
+		<li>
+			<%= u.name %> (<%= u.email %>)
+			<% if (membership && membership.role === 'admin' && u.id !== currentUser.id) { %>
+				<form method="post" action="/projects/<%= project.id %>/remove-member/<%= u.id %>?_method=DELETE" style="display:inline">
+					<button style="margin-left: 10px;">Remove</button>
+				</form>
+			<% } %>
+		</li>
+	<% }) %>
+</ul>
+
+<h3>Attachments</h3>
+<form method="post" enctype="multipart/form-data" action="/attachments/<%= project.id %>">
+	<input type="file" name="file" required />
+	<button>Upload</button>
+</form>
+
+<div>
+	<ul>
+		<% (project.Attachments || []).forEach(a => { %>
+			<li>
+				<a href="/uploads/<%= a.fileName %>" target="_blank"><%= a.originalName %></a>
+				<span>(<%= a.mimeType %>, <%= Math.round(a.sizeBytes/1024) %> KB)</span>
+				<form method="post" action="/attachments/<%= project.id %>/<%= a.id %>?_method=DELETE" style="display:inline">
+					<button>Remove</button>
+				</form>
+			</li>
+		<% }) %>
+	</ul>
+	<% if (!project.Attachments || project.Attachments.length === 0) { %>
+		<p>No attachments yet.</p>
+	<% } %>
+	
+</div>
+
+<h3>Threads</h3>
+<% if (membership && membership.role === 'admin') { %>
+	<a href="/threads/new/<%= project.id %>">New thread</a>
+<% } %>
+
+<div>
+	<ul>
+		<% (project.Threads || []).forEach(t => { %>
+			<li>
+				<strong><%= t.title %></strong>
+				<% if (membership && membership.role === 'admin') { %>
+					<a href="/threads/<%= t.id %>/edit/<%= project.id %>">Edit</a>
+					<form method="post" action="/threads/<%= t.id %>/<%= project.id %>?_method=DELETE" style="display:inline"><button>Delete</button></form>
+				<% } %>
+				<ul>
+					<% (t.Messages || []).forEach(m => { %>
+						<li>
+							<div><%= m.body %> — <em><%= m.author ? m.author.name : 'Unknown' %></em></div>
+							<form method="post" action="/messages/<%= m.id %>?_method=PUT" style="display:inline">
+								<input type="hidden" name="projectId" value="<%= project.id %>" />
+								<input name="body" value="<%= m.body %>" />
+								<button>Update</button>
+							</form>
+							<form method="post" action="/messages/<%= m.id %>/<%= project.id %>?_method=DELETE" style="display:inline"><button>Delete</button></form>
+						</li>
+					<% }) %>
+				</ul>
+				<form method="post" action="/messages">
+					<input type="hidden" name="projectId" value="<%= project.id %>" />
+					<input type="hidden" name="threadId" value="<%= t.id %>" />
+					<input name="body" placeholder="Write a message" required />
+					<button>Post</button>
+				</form>
+			</li>
+		<% }) %>
+	</ul>
+	<% if (!project.Threads || project.Threads.length === 0) { %>
+		<p>No threads yet.</p>
+	<% } %>
+</div>
+
+

@@ -1,0 +1,8 @@
+<h3>Edit Thread</h3>
+<form method="post" action="/threads/<%= id %>?_method=PUT">
+	<input type="hidden" name="projectId" value="<%= projectId %>" />
+	<label>Title <input name="title" required /></label>
+	<button>Update</button>
+</form>
+
+
